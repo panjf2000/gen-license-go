@@ -21,6 +21,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var LICENSES = []string{
+    "agpl-3.0",
+    "apache-2.0",
+    "bsd-2-clause",
+    "bsd-3-clause",
+    "epl-2.0",
+    "gpl-2.0",
+    "gpl-3.0",
+    "lgpl-2.1",
+    "lgpl-3.0",
+    "mit",
+    "mpl-2.0",
+    "unlicenses",
+    "anti996icu-1.0",
+}
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "gen-license-go",
@@ -30,7 +46,9 @@ this generator is developed to generate various open-source licenses including M
 More importantly, the main purpose of this tool is to incoporate those aforesaid licenses into
 a brand new license: 996.icu, defined by this repository.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		
+		for _, license := range LICENSES {
+			fmt.Println(license)
+		}
 	 },
 }
 
@@ -44,7 +62,8 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringP("list", "l", "", "list all licenses")
+	rootCmd.Flags().BoolP("list", "l", true, "list all licenses")
+	rootCmd.MarkFlagRequired("list")
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.

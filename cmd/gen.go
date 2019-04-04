@@ -16,11 +16,14 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
+	"io/ioutil"
 
 	"github.com/spf13/cobra"
 )
 
 var license, template string
+var licensePathTemplate, icuPathTemplate = "licenses/%s.txt", "licenses/996.icu.template.%s.txt"
 
 // genCmd represents the gen command
 var genCmd = &cobra.Command{
@@ -31,7 +34,12 @@ it is used to generate various open-source licenses including MIT, Apache, etc.
 More importantly, the main purpose of this tool is to incoporate those aforesaid licenses into
 a brand new license: 996.icu, defined by this repository.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("gen called")
+		icuTemplate, err := ioutil.ReadFile(fmt.Sprintf(icuPathTemplate, template))
+		handleError(err)
+		licenseContent, err := ioutil.ReadFile(fmt.Sprintf(licensePathTemplate, license))
+		handleError(err)
+		newLicenseContent := strings.Replace(strings.Replace(string(icuTemplate), "{other}", string(license), -1), "{content}", string(licenseContent), 1)
+		handleError(ioutil.WriteFile("LICENSE", []byte(newLicenseContent), 0644))
 	},
 }
 
@@ -47,7 +55,12 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// genCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.Flags().StringVarP(&license, "license", "lc", "", "generate a specific license")
-	rootCmd.Flags().StringP("996icu", "icu", "", "incoporate a specific license into 996icu license")
-	rootCmd.Flags().StringVarP(&template, "template", "t", "", "choose a specific language template for 996icu license")
+	genCmd.Flags().StringVarP(&license, "license", "l", "", "generate a specific license")
+	genCmd.Flags().StringVar(&template, "996icu", "en-us", "incoporate a specific license into 996icu license")
+}
+
+func handleError(e error) {
+	if e != nil {
+		panic(e)
+	}
 }
