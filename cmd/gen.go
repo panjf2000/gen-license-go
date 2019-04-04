@@ -17,12 +17,13 @@ package cmd
 import (
 	"fmt"
 	"strings"
+	"errors"
 	"io/ioutil"
 
 	"github.com/spf13/cobra"
 )
 
-var license, template string
+var template string
 var licensePathTemplate, icuPathTemplate = "licenses/%s.txt", "licenses/996.icu.template.%s.txt"
 
 // genCmd represents the gen command
@@ -31,15 +32,33 @@ var genCmd = &cobra.Command{
 	Short: "gen is a 996.icu license generator-command.",
 	Long: `gen is a 996.icu license generator-command,
 it is used to generate various open-source licenses including MIT, Apache, etc.
-More importantly, the main purpose of this tool is to incoporate those aforesaid licenses into
+More importantly, the main purpose of this tool is to incorporate those aforesaid licenses into
 a brand new license: 996.icu, defined by this repository.`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("missing license name to generate 996icu license")
+		}
+		if ok := isValidLicense(args[0]); !ok {
+			fmt.Printf("Invalid license type: %s, supported licenses:\n**********************************************\n", args[0])
+			for _, v := range LICENSES {
+				fmt.Println(v)
+			}
+			fmt.Println("**********************************************")
+			return errors.New("please check your input")
+		}
+		return nil
+	},
 	Run: func(cmd *cobra.Command, args []string) {
-		icuTemplate, err := ioutil.ReadFile(fmt.Sprintf(icuPathTemplate, template))
+		licenseContent, err := ioutil.ReadFile(fmt.Sprintf(licensePathTemplate, args[0]))
 		handleError(err)
-		licenseContent, err := ioutil.ReadFile(fmt.Sprintf(licensePathTemplate, license))
-		handleError(err)
-		newLicenseContent := strings.Replace(strings.Replace(string(icuTemplate), "{other}", string(license), -1), "{content}", string(licenseContent), 1)
-		handleError(ioutil.WriteFile("LICENSE", []byte(newLicenseContent), 0644))
+		if template != "" {
+			icuTemplate, err := ioutil.ReadFile(fmt.Sprintf(icuPathTemplate, template))
+			handleError(err)
+			newLicenseContent := strings.Replace(strings.Replace(string(icuTemplate), "{other}", string(args[0]), -1), "{content}", string(licenseContent), 1)
+			handleError(ioutil.WriteFile("LICENSE", []byte(newLicenseContent), 0644))
+		} else {
+			handleError(ioutil.WriteFile("LICENSE", licenseContent, 0644))
+		}
 	},
 }
 
@@ -55,12 +74,20 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// genCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	genCmd.Flags().StringVarP(&license, "license", "l", "", "generate a specific license")
-	genCmd.Flags().StringVar(&template, "996icu", "en-us", "incoporate a specific license into 996icu license")
+	genCmd.Flags().StringVar(&template, "996icu", "", "incorporate a specific license into 996icu license")
 }
 
 func handleError(e error) {
 	if e != nil {
 		panic(e)
 	}
+}
+
+func isValidLicense(license string) bool {
+	for _, v := range LICENSES {
+		if license == v {
+			return true
+		}
+	}
+	return false
 }

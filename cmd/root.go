@@ -43,7 +43,7 @@ var rootCmd = &cobra.Command{
 	Short: "gen-license-go is a open-source licenses generator implemented in Go.",
 	Long: `gen-license-go is a 996.icu license generator implemented in Go,
 this generator is developed to generate various open-source licenses including MIT, Apache, etc.
-More importantly, the main purpose of this tool is to incoporate those aforesaid licenses into
+More importantly, the main purpose of this tool is to incorporate those aforesaid licenses into
 a brand new license: 996.icu, defined by this repository.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, license := range LICENSES {
