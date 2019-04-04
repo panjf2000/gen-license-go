@@ -20,6 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var license, template string
 
 // genCmd represents the gen command
 var genCmd = &cobra.Command{
@@ -46,5 +47,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// genCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.Flags().StringVarP(&list, "list", "l", "", "list all licenses")
+	rootCmd.Flags().StringVarP(&license, "license", "lc", "", "generate a specific license")
+	rootCmd.Flags().StringP("996icu", "icu", "", "incoporate a specific license into 996icu license")
+	rootCmd.Flags().StringVarP(&template, "template", "t", "", "choose a specific language template for 996icu license")
 }
