@@ -9,7 +9,7 @@ a brand new license: 996.icu, defined by [996.icu](https://github.com/996icu/996
 
 ## Usage
 There are three executable files of different operating systems: macOS, Linux and Windows, located in `bin` directory, you can pick the specific bin file based on your OS, then put the `licenses` directory and `gen-license-go` file into the same path.
-```
+```sh
  # Get the help from this tool:
 ./gen-license-go -h
 
