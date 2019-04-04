@@ -33,7 +33,14 @@ var genCmd = &cobra.Command{
 	Long: `gen is a 996.icu license generator-command,
 it is used to generate various open-source licenses including MIT, Apache, etc.
 More importantly, the main purpose of this tool is to incorporate those aforesaid licenses into
-a brand new license: 996.icu, defined by this repository.`,
+a brand new license: 996.icu, defined by this repository.
+
+How to use gen:
+# Generate a pure open-source license, take MIT for example:
+gen-license-go mit
+
+# Incorporate a open-source(MIT) license into the 996icu license with a specific-language(en-us or zh-cn) template:
+gen-license-go gen mit --996icu en-us`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("missing license name to generate 996icu license")
