@@ -46,7 +46,7 @@ gen-license-go gen mit --996icu en-us`,
 			return errors.New("missing license name to generate 996icu license")
 		}
 		if ok := isValidLicense(args[0]); !ok {
-			fmt.Printf("Invalid license type: %s, supported licenses:\n**********************************************\n", args[0])
+			fmt.Printf("Invalid license type: %s, should be one of the following licenses:\n**********************************************\n", args[0])
 			for _, v := range LICENSES {
 				fmt.Println(v)
 			}
